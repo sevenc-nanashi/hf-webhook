@@ -7,16 +7,15 @@
     "deploy": "wrangler deploy",
     "dev": "wrangler dev",
     "start": "wrangler dev",
-    "test": "vitest",
-    "cf-typegen": "wrangler types"
+    "cf-typegen": "wrangler types",
+    "lint": "biome check",
+    "fmt": "biome check --write"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
-    "@cloudflare/vitest-pool-workers": "^0.7.5",
     "@hono/zod-validator": "^0.4.3",
     "discord-api-types": "^0.37.119",
     "typescript": "^5.5.2",
-    "vitest": "~3.0.7",
     "wrangler": "^4.1.0"
   },
   "dependencies": {

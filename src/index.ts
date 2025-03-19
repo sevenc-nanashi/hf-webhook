@@ -1,13 +1,13 @@
-import { Hono } from "hono";
 import { zValidator } from "@hono/zod-validator";
+import type { RESTPostAPIWebhookWithTokenJSONBody } from "discord-api-types/rest/v10";
+import { Hono } from "hono";
+import { HTTPException } from "hono/http-exception";
+import { validator } from "hono/validator";
 import z from "zod";
 import {
   discussionCommentPayloadSchema,
   discussionPayloadSchema,
 } from "./schema.ts";
-import { validator } from "hono/validator";
-import { HTTPException } from "hono/http-exception";
-import type { RESTPostAPIWebhookWithTokenJSONBody } from "discord-api-types/rest/v10";
 import { truncate } from "./utils.ts";
 
 const app = new Hono<{ Bindings: Cloudflare.Env }>();
