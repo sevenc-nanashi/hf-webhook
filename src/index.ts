@@ -46,18 +46,18 @@ app.post(
     if (isComment) {
       if (payload.discussion.isPullRequest) {
         kind = "pullRequestComment";
-        embedTitle = `[${payload.repo.owner}/${payload.repo.name}] New comment on pull request #${payload.discussion.num}: ${truncatedTitle}`;
+        embedTitle = `[${payload.repo.name}] New comment on pull request #${payload.discussion.num}: ${truncatedTitle}`;
       } else {
         kind = "issueComment";
-        embedTitle = `[${payload.repo.owner}/${payload.repo.name}] New comment on discussion #${payload.discussion.num}: ${truncatedTitle}`;
+        embedTitle = `[${payload.repo.name}] New comment on discussion #${payload.discussion.num}: ${truncatedTitle}`;
       }
     } else {
       if (payload.discussion.isPullRequest) {
         kind = "pullRequestCreated";
-        embedTitle = `[${payload.repo.owner}/${payload.repo.name}] Pull request opened: #${payload.discussion.num} ${truncatedTitle}`;
+        embedTitle = `[${payload.repo.name}] Pull request opened: #${payload.discussion.num} ${truncatedTitle}`;
       } else {
         kind = "issueCreated";
-        embedTitle = `[${payload.repo.owner}/${payload.repo.name}] New discussion: #${payload.discussion.num} ${truncatedTitle}`;
+        embedTitle = `[${payload.repo.name}] New discussion: #${payload.discussion.num} ${truncatedTitle}`;
       }
     }
 
