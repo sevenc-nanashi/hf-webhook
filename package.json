@@ -1,19 +1,26 @@
 {
-	"name": "hf-webhook",
-	"version": "0.0.0",
-	"private": true,
-	"scripts": {
-		"deploy": "wrangler deploy",
-		"dev": "wrangler dev",
-		"start": "wrangler dev",
-		"test": "vitest",
-		"cf-typegen": "wrangler types"
-	},
-	"devDependencies": {
-		"@cloudflare/vitest-pool-workers": "^0.7.5",
-		"@cloudflare/workers-types": "^4.20250317.0",
-		"typescript": "^5.5.2",
-		"vitest": "~3.0.7",
-		"wrangler": "^4.1.0"
-	}
+  "name": "hf-webhook",
+  "version": "0.0.0",
+  "private": true,
+  "packageManager": "pnpm@10.6.4",
+  "scripts": {
+    "deploy": "wrangler deploy",
+    "dev": "wrangler dev",
+    "start": "wrangler dev",
+    "test": "vitest",
+    "cf-typegen": "wrangler types"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.9.4",
+    "@cloudflare/vitest-pool-workers": "^0.7.5",
+    "@hono/zod-validator": "^0.4.3",
+    "discord-api-types": "^0.37.119",
+    "typescript": "^5.5.2",
+    "vitest": "~3.0.7",
+    "wrangler": "^4.1.0"
+  },
+  "dependencies": {
+    "hono": "^4.7.4",
+    "zod": "^3.24.2"
+  }
 }

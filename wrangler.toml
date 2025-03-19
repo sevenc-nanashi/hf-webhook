@@ -1,0 +1,7 @@
+#:schema ./node_modules/wrangler/config-schema.json
+
+name = "hf-webhook"
+main = "./src/index.ts"
+compatibility_date = "2025-03-17"
+
+kv_namespaces = []
