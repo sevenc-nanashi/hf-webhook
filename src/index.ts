@@ -27,7 +27,7 @@ app.post(
   ),
   validator("header", (header, c) => {
     if (header["x-webhook-secret"] !== c.env.WEBHOOK_SECRET) {
-      throw new HTTPException(400, {
+      throw new HTTPException(403, {
         message: "Invalid webhook secret",
       });
     }
