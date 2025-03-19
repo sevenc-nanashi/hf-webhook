@@ -26,7 +26,7 @@ export const discussionSchema = z.object({
   author: z.object({ id: z.string() }),
   num: z.number(),
   isPullRequest: z.boolean(),
-  changes: z.object({ base: z.string() }),
+  changes: z.object({ base: z.string() }).optional(),
 });
 
 export const commentSchema = z.object({
@@ -46,7 +46,7 @@ export const discussionPayloadSchema = z.object({
   }),
   repo: repoSchema,
   discussion: discussionSchema,
-  comment: commentSchema,
+  comment: commentSchema.optional(),
 });
 
 export const discussionCommentPayloadSchema = z.object({

@@ -15,9 +15,9 @@ const app = new Hono<{ Bindings: Cloudflare.Env }>();
 const colors = {
   pullRequestCreated: 0x009800,
   pullRequestComment: 0xc5e7c5,
-  issueCreated: 0xeb6420,
-  issueComment: 0xe68d60,
-} as const satisfies Record<string, number>;
+  discussionCreated: 0xeb6420,
+  discussionComment: 0xe68d60,
+};
 
 app.post(
   "/webhook",
@@ -39,16 +39,25 @@ app.post(
     const webhook = c.env.DISCORD_WEBHOOK;
 
     const isComment = payload.event.scope === "discussion.comment";
+    const hasComment = "comment" in payload;
 
-    let kind: keyof typeof colors;
+    let kind: string;
     const truncatedTitle = truncate(payload.discussion.title, 150);
     let embedTitle: string;
-    if (isComment) {
+    if (!hasComment && payload.discussion.status === "closed") {
+      if (payload.discussion.isPullRequest) {
+        kind = "pullRequestClosed";
+        embedTitle = `[${payload.repo.name}] Pull request closed: #${payload.discussion.num} ${truncatedTitle}`;
+      } else {
+        kind = "discussionClosed";
+        embedTitle = `[${payload.repo.name}] Discussion closed: #${payload.discussion.num} ${truncatedTitle}`;
+      }
+    } else if (isComment) {
       if (payload.discussion.isPullRequest) {
         kind = "pullRequestComment";
         embedTitle = `[${payload.repo.name}] New comment on pull request #${payload.discussion.num}: ${truncatedTitle}`;
       } else {
-        kind = "issueComment";
+        kind = "discussionComment";
         embedTitle = `[${payload.repo.name}] New comment on discussion #${payload.discussion.num}: ${truncatedTitle}`;
       }
     } else {
@@ -56,7 +65,7 @@ app.post(
         kind = "pullRequestCreated";
         embedTitle = `[${payload.repo.name}] Pull request opened: #${payload.discussion.num} ${truncatedTitle}`;
       } else {
-        kind = "issueCreated";
+        kind = "discussionCreated";
         embedTitle = `[${payload.repo.name}] New discussion: #${payload.discussion.num} ${truncatedTitle}`;
       }
     }
@@ -66,8 +75,10 @@ app.post(
         {
           title: embedTitle,
           url: payload.discussion.url.web,
-          color: colors[kind],
-          description: truncate(payload.comment.content, 500),
+          color:
+            kind in colors ? colors[kind as keyof typeof colors] : undefined,
+          description:
+            payload.comment && truncate(payload.comment.content, 500),
         },
       ],
     };
