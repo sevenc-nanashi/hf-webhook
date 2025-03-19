@@ -44,13 +44,23 @@ app.post(
     let kind: string;
     const truncatedTitle = truncate(payload.discussion.title, 150);
     let embedTitle: string;
-    if (!hasComment && payload.discussion.status === "closed") {
-      if (payload.discussion.isPullRequest) {
-        kind = "pullRequestClosed";
-        embedTitle = `[${payload.repo.name}] Pull request closed: #${payload.discussion.num} ${truncatedTitle}`;
+    if (!hasComment) {
+      if (payload.discussion.status === "open") {
+        if (payload.discussion.isPullRequest) {
+          kind = "pullRequestOpened";
+          embedTitle = `[${payload.repo.name}] Pull request reopened: #${payload.discussion.num} ${truncatedTitle}`;
+        } else {
+          kind = "discussionOpened";
+          embedTitle = `[${payload.repo.name}] Discussion reopened: #${payload.discussion.num} ${truncatedTitle}`;
+        }
       } else {
-        kind = "discussionClosed";
-        embedTitle = `[${payload.repo.name}] Discussion closed: #${payload.discussion.num} ${truncatedTitle}`;
+        if (payload.discussion.isPullRequest) {
+          kind = "pullRequestClosed";
+          embedTitle = `[${payload.repo.name}] Pull request closed: #${payload.discussion.num} ${truncatedTitle}`;
+        } else {
+          kind = "discussionClosed";
+          embedTitle = `[${payload.repo.name}] Discussion closed: #${payload.discussion.num} ${truncatedTitle}`;
+        }
       }
     } else if (isComment) {
       if (payload.discussion.isPullRequest) {
@@ -70,7 +80,9 @@ app.post(
       }
     }
 
-    const embed: RESTPostAPIWebhookWithTokenJSONBody = {
+    const discordContent: RESTPostAPIWebhookWithTokenJSONBody = {
+      avatar_url: "https://cdn.brandfetch.io/idGqKHD5xE/w/242/h/242/theme/dark/icon.jpeg?c=1dxbfHSJFAPEGdCLU4o5B",
+      username: "Hugging Face",
       embeds: [
         {
           title: embedTitle,
@@ -88,7 +100,7 @@ app.post(
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(embed),
+      body: JSON.stringify(discordContent),
     });
 
     return c.body(null, 204);

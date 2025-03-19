@@ -1,10 +1,12 @@
 // https://huggingface.co/docs/hub/webhooks#webhook-payloads
 import z from "zod";
 
+const idSchema = z.union([z.string(), z.object({ buffer: z.string() })]);
+
 export const repoSchema = z.object({
   type: z.string(),
   name: z.string(),
-  id: z.string(),
+  id: idSchema,
   private: z.boolean(),
   url: z.object({ web: z.string(), api: z.string() }),
   owner: z.object({ id: z.string() }),
@@ -19,11 +21,11 @@ export const updatedRefsSchema = z.array(
 );
 
 export const discussionSchema = z.object({
-  id: z.string(),
+  id: idSchema,
   title: z.string(),
   url: z.object({ web: z.string(), api: z.string() }),
   status: z.string(),
-  author: z.object({ id: z.string() }),
+  author: z.object({ id: idSchema }),
   num: z.number(),
   isPullRequest: z.boolean(),
   changes: z.object({ base: z.string() }).optional(),
@@ -31,7 +33,7 @@ export const discussionSchema = z.object({
 
 export const commentSchema = z.object({
   id: z.string(),
-  author: z.object({ id: z.string() }),
+  author: z.object({ id: idSchema }),
   content: z.string(),
   hidden: z.boolean(),
   url: z.object({ web: z.string() }),
