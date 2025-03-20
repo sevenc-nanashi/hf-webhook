@@ -38,13 +38,14 @@ app.post(
     const payload = c.req.valid("json");
     const webhook = c.env.DISCORD_WEBHOOK;
 
-    const isComment = payload.event.scope === "discussion.comment";
-    const hasComment = "comment" in payload;
-
     let kind: string;
     const truncatedTitle = truncate(payload.discussion.title, 150);
     let embedTitle: string;
-    if (!hasComment) {
+
+    if (
+      payload.event.scope === "discussion" &&
+      payload.event.action === "update"
+    ) {
       if (payload.discussion.status === "open") {
         if (payload.discussion.isPullRequest) {
           kind = "pullRequestOpened";
@@ -62,7 +63,21 @@ app.post(
           embedTitle = `[${payload.repo.name}] Discussion closed: #${payload.discussion.num} ${truncatedTitle}`;
         }
       }
-    } else if (isComment) {
+    } else if (
+      payload.event.scope === "discussion" &&
+      payload.event.action === "create"
+    ) {
+      if (payload.discussion.isPullRequest) {
+        kind = "pullRequestCreated";
+        embedTitle = `[${payload.repo.name}] Pull request opened: #${payload.discussion.num} ${truncatedTitle}`;
+      } else {
+        kind = "discussionCreated";
+        embedTitle = `[${payload.repo.name}] New discussion: #${payload.discussion.num} ${truncatedTitle}`;
+      }
+    } else if (
+      payload.event.scope === "discussion.comment" &&
+      payload.event.action === "create"
+    ) {
       if (payload.discussion.isPullRequest) {
         kind = "pullRequestComment";
         embedTitle = `[${payload.repo.name}] New comment on pull request #${payload.discussion.num}: ${truncatedTitle}`;
@@ -71,17 +86,12 @@ app.post(
         embedTitle = `[${payload.repo.name}] New comment on discussion #${payload.discussion.num}: ${truncatedTitle}`;
       }
     } else {
-      if (payload.discussion.isPullRequest) {
-        kind = "pullRequestCreated";
-        embedTitle = `[${payload.repo.name}] Pull request opened: #${payload.discussion.num} ${truncatedTitle}`;
-      } else {
-        kind = "discussionCreated";
-        embedTitle = `[${payload.repo.name}] New discussion: #${payload.discussion.num} ${truncatedTitle}`;
-      }
+      return c.body(null, 204);
     }
 
     const discordContent: RESTPostAPIWebhookWithTokenJSONBody = {
-      avatar_url: "https://cdn.brandfetch.io/idGqKHD5xE/w/242/h/242/theme/dark/icon.jpeg?c=1dxbfHSJFAPEGdCLU4o5B",
+      avatar_url:
+        "https://cdn.brandfetch.io/idGqKHD5xE/w/242/h/242/theme/dark/icon.jpeg?c=1dxbfHSJFAPEGdCLU4o5B",
       username: "Hugging Face",
       embeds: [
         {
