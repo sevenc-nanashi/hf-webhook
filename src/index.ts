@@ -96,7 +96,9 @@ app.post(
       embeds: [
         {
           title: embedTitle,
-          url: payload.discussion.url.web,
+          url: payload.comment
+            ? payload.comment.url.web
+            : payload.discussion.url.web,
           color:
             kind in colors ? colors[kind as keyof typeof colors] : undefined,
           description:
